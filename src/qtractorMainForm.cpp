@@ -930,6 +930,9 @@ qtractorMainForm::qtractorMainForm (
 	QObject::connect(m_ui.clipMergeAction,
 		SIGNAL(triggered(bool)),
 		SLOT(clipMerge()));
+	QObject::connect(m_ui.clipDuplicateAction,
+		SIGNAL(triggered(bool)),
+		SLOT(clipDuplicate()));
 	QObject::connect(m_ui.clipNormalizeAction,
 		SIGNAL(triggered(bool)),
 		SLOT(clipNormalize()));
@@ -4406,6 +4409,19 @@ void qtractorMainForm::clipMerge (void)
 }
 
 
+// Duplicate selected (MIDI) clip.
+void qtractorMainForm::clipDuplicate (void)
+{
+#ifdef CONFIG_DEBUG
+	qDebug("qtractorMainForm::clipDuplicate()");
+#endif
+
+	// Duplicate selected clip, if any...
+	if (m_pTracks)
+		m_pTracks->duplicateClip();
+}
+
+
 // Normalize current clip.
 void qtractorMainForm::clipNormalize (void)
 {
@@ -7318,6 +7334,7 @@ void qtractorMainForm::updateClipMenu (void)
 		&& iPlayHead > pClip->clipStart()
 		&& iPlayHead < pClip->clipStart() + pClip->clipLength());
 	m_ui.clipMergeAction->setEnabled(bSingleTrackSelected);
+	m_ui.clipDuplicateAction->setEnabled(bClipSelected);
 	m_ui.clipNormalizeAction->setEnabled(bClipSelected);
 	m_ui.clipTempoAdjustAction->setEnabled(bClipSelectable);
 	m_ui.clipCrossFadeAction->setEnabled(bClipSelected);

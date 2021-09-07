@@ -568,7 +568,7 @@ bool qtractorTracks::editClip ( qtractorClip *pClip )
 
 
 // Unlink given(current) clip.
-bool qtractorTracks::unlinkClip ( qtractorClip *pClip )
+bool qtractorTracks::unlinkClip ( qtractorClip *pClip, bool bForce)
 {
 	if (pClip == nullptr)
 		pClip = m_pTrackView->currentClip();
@@ -580,7 +580,7 @@ bool qtractorTracks::unlinkClip ( qtractorClip *pClip )
 	if (pMidiClip == nullptr)
 		return false;
 
-	if (!pMidiClip->isHashLinked())
+	if (!pMidiClip->isHashLinked() && !bForce)
 		return false;
 
 	qtractorSession *pSession = qtractorSession::getInstance();
@@ -675,6 +675,37 @@ bool qtractorTracks::splitClip ( qtractorClip *pClip )
 	return pSession->execute(pClipCommand);
 }
 
+// Duplicate (clone and unlink) given MIDI clip.
+bool qtractorTracks::duplicateClip ( qtractorClip *pClip )
+{
+	qtractorSession *pSession = qtractorSession::getInstance();
+	if (pSession == nullptr)
+		return false;
+
+	qtractorTrack *pTrack = currentTrack();
+	if (pTrack == nullptr)
+		return false;
+
+	if (pTrack->trackType() == qtractorTrack::Audio)
+		return false;
+
+	if (pClip == nullptr)
+		pClip = m_pTrackView->currentClip();
+
+	if (pClip == nullptr)
+		return false;
+
+	qtractorClipCommand *pClipCommand = new qtractorClipCommand(tr("duplicate clip"));
+	qtractorClip *pNewClip = m_pTrackView->cloneClip(pClip);
+	if (pNewClip) {
+		pNewClip->setClipStart(pClip->clipStart() + pClip->clipLength());
+		pNewClip->setClipLength(pClip->clipLength());
+		pClipCommand->addClip(pNewClip, pNewClip->track());
+		return pSession->execute(pClipCommand) && unlinkClip(pNewClip, true);
+	}
+
+	return false;
+}
 
 // Audio clip normalize callback.
 struct audioClipNormalizeData

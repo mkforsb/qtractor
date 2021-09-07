@@ -209,6 +209,7 @@ public slots:
 	void clipRecordEx(bool bOn);
 	void clipSplit();
 	void clipMerge();
+	void clipDuplicate();
 	void clipNormalize();
 	void clipTempoAdjust();
 	void clipCrossFade();

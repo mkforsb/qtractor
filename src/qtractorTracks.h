@@ -90,8 +90,9 @@ public:
 
 	bool newClip();
 	bool editClip(qtractorClip *pClip = nullptr);
-	bool unlinkClip(qtractorClip *pClip = nullptr);
+	bool unlinkClip(qtractorClip *pClip = nullptr, bool bForce = false);
 	bool splitClip(qtractorClip *pClip = nullptr);
+	bool duplicateClip(qtractorClip *pClip = nullptr);
 	bool normalizeClip(qtractorClip *pClip = nullptr);
 	bool rangeClip(qtractorClip *pClip = nullptr);
 	bool loopClip(qtractorClip *pClip = nullptr);

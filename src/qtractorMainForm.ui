@@ -368,6 +368,7 @@
     <addaction name="separator"/>
     <addaction name="clipSplitAction"/>
     <addaction name="clipMergeAction"/>
+    <addaction name="clipDuplicateAction"/>
     <addaction name="clipNormalizeAction"/>
     <addaction name="separator"/>
     <addaction name="clipTempoAdjustAction"/>
@@ -1804,6 +1805,20 @@
    </property>
    <property name="statusTip">
     <string>Merge selected clips</string>
+   </property>
+  </action>
+  <action name="clipDuplicateAction">
+   <property name="text">
+    <string>&amp;Duplicate</string>
+   </property>
+   <property name="iconText">
+    <string>Duplicate Clip</string>
+   </property>
+   <property name="toolTip">
+    <string>Duplicate clip</string>
+   </property>
+   <property name="statusTip">
+    <string>Duplicate selected clip</string>
    </property>
   </action>
   <action name="clipNormalizeAction">
