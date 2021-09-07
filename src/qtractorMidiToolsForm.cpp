@@ -292,6 +292,9 @@ qtractorMidiToolsForm::qtractorMidiToolsForm ( QWidget *pParent )
 	QObject::connect(m_ui.TransposeTimeSpinBox,
 		SIGNAL(valueChanged(unsigned long)),
 		SLOT(changed()));
+	QObject::connect(m_ui.TransposeTimeNegativeCheckBox,
+		SIGNAL(toggled(bool)),
+		SLOT(changed()));
 	QObject::connect(m_ui.TransposeFormatComboBox,
 		SIGNAL(activated(int)),
 		SLOT(formatChanged(int)));
@@ -516,6 +519,9 @@ void qtractorMidiToolsForm::loadPreset ( const QString& sPreset )
 		// Transpose/reverse tool...
 		if (vlist.count() > 5)
 			m_ui.TransposeReverseCheckBox->setChecked(vlist[5].toBool());
+		// Transpose/negative time tool...
+		if (vlist.count() > 6)
+			m_ui.TransposeTimeNegativeCheckBox->setChecked(vlist[6].toBool());
 		// Normalize tool...
 		vlist = settings.value("/Normalize").toList();
 		if (vlist.count() > 4) {
@@ -614,6 +620,7 @@ void qtractorMidiToolsForm::savePreset ( const QString& sPreset )
 		vlist.append(m_ui.TransposeTimeCheckBox->isChecked());
 		vlist.append((unsigned int) m_ui.TransposeTimeSpinBox->value());
 		vlist.append(m_ui.TransposeReverseCheckBox->isChecked());
+		vlist.append(m_ui.TransposeTimeNegativeCheckBox->isChecked());
 		settings.setValue("/Transpose", vlist);
 		// Normalize tool...
 		vlist.clear();
@@ -931,8 +938,18 @@ qtractorMidiEditCommand *qtractorMidiToolsForm::editCommand (
 					iNote = 127;
 			}
 			if (m_ui.TransposeTimeCheckBox->isChecked()) {
-				iTime = pNode->tickFromFrame(pNode->frameFromTick(iTime)
-					+ m_ui.TransposeTimeSpinBox->value());
+				if (m_ui.TransposeTimeNegativeCheckBox->isChecked()) {
+					// Avoid trying to go to a negative frame/tick
+					if (long(pNode->frameFromTick(iTime))
+						- long(m_ui.TransposeTimeSpinBox->value()) >= 0) {
+						iTime = pNode->tickFromFrame(pNode->frameFromTick(iTime)
+							- m_ui.TransposeTimeSpinBox->value());
+					}
+				}
+				else {
+					iTime = pNode->tickFromFrame(pNode->frameFromTick(iTime)
+						+ m_ui.TransposeTimeSpinBox->value());
+				}
 				if (iTime < long(iTimeOffset))
 					iTime = long(iTimeOffset);
 			}
