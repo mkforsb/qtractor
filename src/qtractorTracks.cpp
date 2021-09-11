@@ -700,6 +700,7 @@ bool qtractorTracks::duplicateClip ( qtractorClip *pClip )
 	if (pNewClip) {
 		pNewClip->setClipStart(pClip->clipStart() + pClip->clipLength());
 		pNewClip->setClipLength(pClip->clipLength());
+		pNewClip->setClipOffset(pClip->clipOffset());
 		pClipCommand->addClip(pNewClip, pNewClip->track());
 		return pSession->execute(pClipCommand) && unlinkClip(pNewClip, true);
 	}
